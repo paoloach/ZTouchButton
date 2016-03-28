@@ -1,0 +1,91 @@
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[DebugChecksum]
+Checksum=-482490181
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[BreakpointUsageDialog]
+Placement=_ 738 325 1183 607
+[Breakpoints]
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c}.84.2" 0 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c}.78.2" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\test\mainTestcs5463.c}.121.2" 0 0 0 0 "" 0 ""
+Count=3
+[ChipconEmu]
+Stop timers on halt=1
+Leave target running=1
+[struct_types]
+Fmt0=union CS5463Reg-value	4	0
+Fmt1=zclAttrRec_t-attrId	4	0
+[watch_formats]
+Fmt0={W}0:reg00	4	0
+Fmt1={W}0:reg02	4	0
+Fmt2={W}0:reg04	4	0
+Fmt3={W}0:reg05	4	0
+Fmt4={W}0:reg11	4	0
+Fmt5={W}0:reg12	4	0
+Fmt6={W}0:reg15	4	0
+Fmt7={W}0:reg18	4	0
+Fmt8={W}0:tasksCnt	4	0
+Fmt9={W}0:temperatureValue	3	0
+Fmt10={W}0:ticks	4	0
+Fmt11={W}0:value5463	4	0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[CallStackLog]
+Enabled=0
+[DriverProfiling]
+Enabled=0
+Mode=1
+Graph=0
+Symbiont=0
+Exclusions=
+[InterruptLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[DataLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+[Breakpoints2]
+Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\Source\test\mainTestcs5463.c}.52.1" 0 0 1 "" 0 ""
+Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\Source\test\mainTestcs5463.c}.53.1" 0 0 1 "" 0 ""
+Bp2=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\Source\ZTouchButton.c}.109.3" 0 0 1 "" 0 ""
+Bp3=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\Source\zmain\ZMain.c}.78.3" 0 0 1 "" 0 ""
+Count=4
+[Interrupts]
+Enabled=1
+[MemoryMap]
+Enabled=0
+Base=0
+UseAuto=0
+TypeViolation=1
+UnspecRange=1
+ActionState=1
+[Aliases]
+Count=0
+SuppressDialog=0
+[Trace1]
+Enabled=0
+ShowSource=1
