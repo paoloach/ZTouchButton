@@ -1,3 +1,23 @@
+gEDA/*.sch~
+# Object files
+*.d51
+*.cout
+*.o
+*.ko
+*.obj
+*.elf
+*.r51
+*.pbi
+*.s51
+*.lst
+*.map
+*.pbd
+firmware/CC2530DB/RouterEB/List/*
+firmware/CC2530DB/RouterEB/Obj/*
+firmware/CC2530DB/RouterEB/Exe/*
+firmware/CC2530DB/testCS5463/*
+
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
