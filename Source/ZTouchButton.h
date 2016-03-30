@@ -13,11 +13,8 @@ extern "C"
 
 #include "zcl.h"
 
-#define ENDPOINT_ONOFF            13
+#define ENDPOINT_ONOFF_SWITCH            13
 	
-#define ENDPOINT_METERING            15
-
-
 extern SimpleDescriptionFormat_t OnOff_SimpleDesc;
 
 extern void ZTouchButton_Init( byte task_id );

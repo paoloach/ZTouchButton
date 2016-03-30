@@ -1150,9 +1150,6 @@
         <name>$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\Source\clusters\ClusterPower.c</name>
       </file>
     </group>

@@ -1,12 +1,12 @@
 /**************************************************************************************************
-  Filename:       PowerMeter_data.c
-  Autorh: 		 Paolo Achdjia
-  Created: 13/10/2015
+Filename:       PowerMeter_data.c
+Autorh: 		 Paolo Achdjia
+Created: 13/10/2015
 **************************************************************************************************/
 
 /*********************************************************************
- * INCLUDES
- */
+* INCLUDES
+*/
 #include "ZComDef.h"
 #include "OSAL.h"
 #include "AF.h"
@@ -23,8 +23,8 @@
 #include "clusters/ClusterOnOff.h"
 
 /*********************************************************************
- * CONSTANTS
- */
+* CONSTANTS
+*/
 
 #define DEVICE_VERSION     0
 #define FLAGS              0
@@ -32,37 +32,36 @@
 
 
 /*********************************************************************
- * ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
- */
+* ATTRIBUTE DEFINITIONS - Uses REAL cluster IDs
+*/
 
 /*********************************************************************
- * SIMPLE DESCRIPTOR
- */
+* SIMPLE DESCRIPTOR
+*/
 // This is the Cluster ID List and should be filled with Application specific cluster IDs.
-const cId_t onOff_InClusterList[] ={
-  ZCL_CLUSTER_ID_GEN_BASIC,
-  ZCL_CLUSTER_ID_GEN_IDENTIFY,
-  ZCL_CLUSTER_ID_GEN_POWER_CFG,
-  ZCL_CLUSTER_ID_GEN_ON_OFF,
-  ZCL_CLUSTER_ID_TEST
-	  
+const cId_t onOff_switch_InClusterList[] ={
+	ZCL_CLUSTER_ID_GEN_BASIC,
+	ZCL_CLUSTER_ID_GEN_IDENTIFY,
+	ZCL_CLUSTER_ID_GEN_POWER_CFG
 };
 
-const cId_t onOff_OutClusterList[] ={
-  ZCL_CLUSTER_ID_GEN_BASIC,
+const cId_t onOff_switch_OutClusterList[] ={
+	ZCL_CLUSTER_ID_GEN_BASIC,
+	ZCL_CLUSTER_ID_GEN_ON_OFF,
+    ZCL_CLUSTER_ID_GEN_IDENTIFY,
 };
 
 
 SimpleDescriptionFormat_t OnOff_SimpleDesc = {
-  ENDPOINT_ONOFF,                  			//  int Endpoint;
-  ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
-  ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
-  DEVICE_VERSION,           			//  int   AppDevVer:4;
-  FLAGS,                    			//  int   AppFlags:4;
-  sizeof(onOff_InClusterList)/2,              //  byte  AppNumInClusters;
-  (cId_t *)onOff_InClusterList, 	//  byte *pAppInClusterList;
-  sizeof(onOff_OutClusterList)/2,           //  byte  AppNumInClusters;
-  (cId_t *)onOff_OutClusterList 	//  byte *pAppInClusterList;
+	ENDPOINT_ONOFF_SWITCH,                  			//  int Endpoint;
+	ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
+	ZCL_HA_DEVICEID_ON_OFF_LIGHT_SWITCH,     	//  uint16 AppDeviceId[2];
+	DEVICE_VERSION,           			//  int   AppDevVer:4;
+	FLAGS,                    			//  int   AppFlags:4;
+	sizeof(onOff_switch_InClusterList)/2,              //  byte  AppNumInClusters;
+	(cId_t *)onOff_switch_InClusterList, 	//  byte *pAppInClusterList;
+	sizeof(onOff_switch_OutClusterList)/2,           //  byte  AppNumInClusters;
+	(cId_t *)onOff_switch_OutClusterList 	//  byte *pAppInClusterList;
 };
 
 

@@ -65,19 +65,16 @@ void ZTouchButton_Init( byte task_id ){
 	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC, handleClusterCommands );
  	
 	zclHA_Init( &OnOff_SimpleDesc );
-	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT_ONOFF,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
-	addReadAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT_ONOFF, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF_SWITCH, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_ONOFF_SWITCH, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF_SWITCH, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+	addWriteAttributeFn(ENDPOINT_ONOFF_SWITCH, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+	addReadAttributeFn(ENDPOINT_ONOFF_SWITCH,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
 	
 	zcl_registerForMsg( ZTouchButtonTaskID );
   
   	EA=1;
  	identifyInit(ZTouchButtonTaskID);
-	onOffInit();
 	ZMacSetTransmitPower(TX_PWR_PLUS_3);
 }
 
@@ -281,7 +278,6 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 	    case ZCL_CLUSTER_ID_GEN_GROUPS:
     	case ZCL_CLUSTER_ID_GEN_SCENES:
 	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
-			return processOnOffClusterServerCommands( pInMsg );
     	case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
 	    case ZCL_CLUSTER_ID_GEN_ALARMS:
     	case ZCL_CLUSTER_ID_GEN_LOCATION:
