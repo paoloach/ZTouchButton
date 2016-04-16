@@ -70,6 +70,13 @@ Fmt8={W}0:tasksCnt	4	0
 Fmt9={W}0:temperatureValue	3	0
 Fmt10={W}0:ticks	4	0
 Fmt11={W}0:value5463	4	0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
 [Breakpoints]
 Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c}.91.2" 0 0 0 0 "" 0 ""
 Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c}.78.2" 0 0 0 0 "" 0 ""
@@ -82,13 +89,6 @@ Count=7
 [ChipconEmu]
 Stop timers on halt=0
 Leave target running=1
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Aliases]
 Count=0
 SuppressDialog=0

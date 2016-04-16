@@ -235,7 +235,7 @@ extern "C" {
 
 // Maximum number in tables
 #if !defined( NWK_MAX_DEVICE_LIST )
-  #define NWK_MAX_DEVICE_LIST     20  // Maximum number of devices in the
+  #define NWK_MAX_DEVICE_LIST     50  // Maximum number of devices in the
                                     // Assoc/Device list.
 #endif
 

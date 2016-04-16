@@ -1,5 +1,9 @@
 gEDA/*.sch~
 # Object files
+*.wsdt
+*.dbgdt
+*.dni
+*.deb
 *.d51
 *.cout
 *.o
