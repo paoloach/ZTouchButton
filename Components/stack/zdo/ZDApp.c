@@ -266,9 +266,6 @@ uint16 ZDApp_SavedPollRate = POLL_RATE;
 
 ZDAppNewDevice_t *ZDApp_NewDeviceList = NULL;
 
-/* "Hold Key" status saved during ZDAppCheckForHoldKey() */
-static uint8 zdappHoldKeys;
-
 /*********************************************************************
  * @fn      ZDApp_Init
  *
@@ -641,70 +638,54 @@ UINT16 ZDApp_ProcessSecEvent( uint8 task_id, UINT16 events )
  *          started in the network (one time only).  The next time this
  *          function is called it will start.
  */
-uint8 ZDOInitDevice( uint16 startDelay )
-{
-  uint8 networkStateNV = ZDO_INITDEV_NEW_NETWORK_STATE;
-  uint16 extendedDelay = 0;
+uint8 ZDOInitDevice( uint16 startDelay ){
+	uint8 networkStateNV = ZDO_INITDEV_NEW_NETWORK_STATE;
+	uint16 extendedDelay = 0;
 
-  ZDConfig_InitDescriptors();
-  //devtag.071807.todo - fix this temporary solution
-  _NIB.CapabilityFlags = ZDO_Config_Node_Descriptor.CapabilityFlags;
+	ZDConfig_InitDescriptors();
+	//devtag.071807.todo - fix this temporary solution
+	_NIB.CapabilityFlags = ZDO_Config_Node_Descriptor.CapabilityFlags;
 
 #if defined ( NV_RESTORE )
-  // Hold down the SW_BYPASS_NV key (defined in OnBoard.h)
-  // while booting to skip past NV Restore.
-  if ( zdappHoldKeys == SW_BYPASS_NV )
-  {
-    zdappHoldKeys = 0;   // Only once
-    networkStateNV = ZDO_INITDEV_NEW_NETWORK_STATE;
-  }
-  else
-  {
     // Determine if NV should be restored
-    networkStateNV = ZDApp_ReadNetworkRestoreState();
-  }
+	networkStateNV = ZDApp_ReadNetworkRestoreState();
 
-  if ( networkStateNV == ZDO_INITDEV_RESTORED_NETWORK_STATE )
-  {
-    networkStateNV = ZDApp_RestoreNetworkState();
-  }
-  else
-  {
-    // Wipe out the network state in NV
-    NLME_InitNV();
-    NLME_SetDefaultNV();
-    // clear NWK key values
-    ZDSecMgrClearNVKeyValues();
-  }
+	if ( networkStateNV == ZDO_INITDEV_RESTORED_NETWORK_STATE ) {
+		networkStateNV = ZDApp_RestoreNetworkState();
+	}
+	else {
+	// Wipe out the network state in NV
+		NLME_InitNV();
+		NLME_SetDefaultNV();
+		// clear NWK key values
+		ZDSecMgrClearNVKeyValues();
+	}
 #endif
 
-  if ( networkStateNV == ZDO_INITDEV_NEW_NETWORK_STATE )
-  {
-    ZDAppDetermineDeviceType();
+	if ( networkStateNV == ZDO_INITDEV_NEW_NETWORK_STATE ){
+		ZDAppDetermineDeviceType();
+		// Only delay if joining network - not restoring network state
+		extendedDelay = (uint16)((NWK_START_DELAY + startDelay) + (osal_rand() & EXTENDED_JOINING_RANDOM_MASK));
+	}
 
-    // Only delay if joining network - not restoring network state
-    extendedDelay = (uint16)((NWK_START_DELAY + startDelay)
-              + (osal_rand() & EXTENDED_JOINING_RANDOM_MASK));
-  }
+	// Initialize the security for type of device
+	ZDApp_SecInit( networkStateNV );
 
-  // Initialize the security for type of device
-  ZDApp_SecInit( networkStateNV );
+	devState = DEV_INIT;    // Remove the Hold state
 
-  devState = DEV_INIT;    // Remove the Hold state
+	// Initialize leave control logic
+	ZDApp_LeaveCtrlInit();
 
-    // Initialize leave control logic
-  ZDApp_LeaveCtrlInit();
+	// Check leave control reset settings
+	ZDApp_LeaveCtrlStartup( &devState, &startDelay );
 
-    // Check leave control reset settings
-  ZDApp_LeaveCtrlStartup( &devState, &startDelay );
+	// Trigger the network start
+	ZDApp_NetworkInit( extendedDelay );
 
-    // Trigger the network start
-    ZDApp_NetworkInit( extendedDelay );
+	// set broadcast address mask to support broadcast filtering
+	NLME_SetBroadcastFilter( ZDO_Config_Node_Descriptor.CapabilityFlags );
 
-  // set broadcast address mask to support broadcast filtering
-  NLME_SetBroadcastFilter( ZDO_Config_Node_Descriptor.CapabilityFlags );
-
-  return ( networkStateNV );
+	return ( networkStateNV );
 }
 
 /*********************************************************************

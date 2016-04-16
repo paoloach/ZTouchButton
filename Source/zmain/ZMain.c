@@ -101,6 +101,8 @@ static void BOARD_INIT(void)
  */
 int main( void )
 {
+	
+//APSDE_DataReqMTU(0);
   // Turn off interrupts
   osal_int_disable( INTS_ALL );
 

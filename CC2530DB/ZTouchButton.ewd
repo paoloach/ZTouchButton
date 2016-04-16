@@ -219,7 +219,7 @@
         </option>
         <option>
           <name>ChipconStackOverflow</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>ChipconNoBanks</name>
@@ -636,7 +636,7 @@
         </option>
         <option>
           <name>SimPspConfigFile</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\config\test.psp.config</state>
         </option>
       </data>
     </settings>

@@ -18,33 +18,40 @@
 #define ON_TIME 600
 #define OFF_TIME 400
 
+#define FAST_BLINK_TIME 100
+
 static uint16 identifyTime=0;
 
 static byte mainAppTaskId;
 
-static uint8  onOff;
+#define OFF 0
+#define  ON 1
+#define FAST_BLINK 2
+
+static uint8  onOff=OFF;
+
 
 __sfr __no_init volatile struct  {
-	unsigned char DIR0_0: 1;
-	unsigned char DIR0_1: 1;
-	unsigned char DIR0_2: 1;
-	unsigned char DIR0_3: 1;
-	unsigned char DIR0_4: 1;
-	unsigned char DIR0_5: 1;
-	unsigned char DIR0_6: 1;
-	unsigned char DIR0_7: 1;
-} @ 0xFD;
+	unsigned char DIR1_0: 1;
+	unsigned char DIR1_1: 1;
+	unsigned char DIR1_2: 1;
+	unsigned char DIR1_3: 1;
+	unsigned char DIR1_4: 1;
+	unsigned char DIR1_5: 1;
+	unsigned char DIR1_6: 1;
+	unsigned char DIR1_7: 1;
+} @ 0xFE;
 
 __sfr __no_init volatile struct  {
-	unsigned char P0SEL_0: 1;
-	unsigned char P0SEL_1: 1;
-	unsigned char P0SEL_2: 1;
-	unsigned char P0SEL_3: 1;
-	unsigned char P0SEL_4: 1;
-	unsigned char P0SEL_5: 1;
-	unsigned char P0SEL_6: 1;
-	unsigned char P0SEL_7: 1;
-} @ 0xF3;
+	unsigned char P1SEL_0: 1;
+	unsigned char P1SEL_1: 1;
+	unsigned char P1SEL_2: 1;
+	unsigned char P1SEL_3: 1;
+	unsigned char P1SEL_4: 1;
+	unsigned char P1SEL_5: 1;
+	unsigned char P1SEL_6: 1;
+	unsigned char P1SEL_7: 1;
+} @ 0xF4;
 
 
 void identifyClusterReadAttribute(zclAttrRec_t * attribute){
@@ -74,49 +81,58 @@ void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
 }
 
 void identifyInit(byte taskId){
-	DIR0_1 = 1;
- 	P0SEL_1 = 0;
- 	P0_1 = 0;
+	DIR1_0 = 1;
+ 	P1SEL_0 = 0;
+ 	P1_0 = 0;
 	mainAppTaskId = taskId;
 }
 
 uint16 identifyLoop(uint16 events){
-	if (onOff){
+	if (onOff==ON){
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
-		onOff=0;
-		P0_1 = 1;
-	} else {
-		onOff=1;
+		onOff=OFF;
+		P1_0 = 1;
+	} else if (onOff==OFF ){
+		onOff=ON;
 		if ( identifyTime > 0 ){
     		identifyTime--;
 		}
     	if (identifyTime>0){
 			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-			P0_1 = 0;
+			P1_0 = 0;
 		} else{
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-			P0_1 = 0;
+			P1_0 = 0;
 		}
+	} else if (onOff == FAST_BLINK){
+		if (P1_0)
+			P1_0 = 0;
+		else
+			P1_0 = 1;
+		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, FAST_BLINK_TIME );
 	}
     return ( events ^ IDENTIFY_TIMEOUT_EVT );
 }
 
 
-/*********************************************************************
- * @fn      processIdentifyTimeChange
- *
- * @brief   Called to process any change to the IdentifyTime attribute.
- *
- * @param   none
- *
- * @return  none
- */
+void fastBlinkOn(void){
+	onOff = FAST_BLINK;
+	osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, FAST_BLINK_TIME );
+	P1_0 = 1;
+}
+			   
+void fastBlinkOff(void){
+	onOff = OFF;
+	osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
+	P1_0 = 0;
+}
+
 void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
-		onOff=1;
-		P0_1 = 1;
+		onOff=ON;
+		P1_0 = 1;
 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
 		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );

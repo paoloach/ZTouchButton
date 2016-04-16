@@ -54,6 +54,7 @@ extern "C"
 #include "hal_uart.h"
 #include "hal_sleep.h"
 #include "osal.h"
+#include "KeyChange.h"
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -234,12 +235,6 @@ extern uint8 aExtendedAddress[8];
   #define BUZZER_BLIP 2
 #endif
 
-typedef struct
-{
-  osal_event_hdr_t hdr;
-  uint8 state; // shift
-  uint8 keys;  // keys
-} keyChange_t;
 
 /*********************************************************************
  * FUNCTIONS
@@ -274,31 +269,7 @@ typedef struct
    */
   extern void _itoa( uint16 num, uint8 *buf, uint8 radix );
 
-
-  extern void Dimmer( uint8 lvl );
-
 /* External I/O Processing Functions */
-  /*
-   * Turn on an external lamp
-   */
-  extern void BigLight_On( void );
-
-  /*
-   * Turn off an external lamp
-   */
-  extern void BigLight_Off( void );
-
-  /*
-   * Turn on/off an external buzzer
-   *   on:   BUZZER_ON or BUZZER_OFF
-   */
-  extern void BuzzerControl( uint8 on );
-
-  /*
-   * Get setting of external dip switch
-   */
-  extern uint8 GetUserDipSw( void );
-
   /*
    * Calculate the size of used stack
    */

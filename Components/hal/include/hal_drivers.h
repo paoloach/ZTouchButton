@@ -95,6 +95,8 @@ extern void Hal_ProcessPoll (void);
  */
 extern void HalDriverInit (void);
 
+extern void setRegisteredKeysTaskID(uint8 registeredKeysTaskID);
+
 #ifdef __cplusplus
 }
 #endif

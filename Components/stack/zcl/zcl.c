@@ -653,6 +653,7 @@ static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameTy
 
   // Is device enabled?
 	ReadAttributeFn callback = findReadAttributeFn(srcEP, ZCL_CLUSTER_ID_GEN_BASIC);
+	attrRec.attrId=ATTRID_BASIC_DEVICE_ENABLED;
 	callback(&attrRec);
 	return ( *(uint8 *)attrRec.dataPtr == DEVICE_ENABLED ? TRUE : FALSE );
 }

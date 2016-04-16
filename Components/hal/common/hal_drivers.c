@@ -59,6 +59,7 @@
 #include "hal_timer.h"
 #include "hal_types.h"
 #include "hal_uart.h"
+#include "KeyChange.h"
 #ifdef CC2591_COMPRESSION_WORKAROUND
 #include "mac_rx.h"
 #endif
@@ -73,12 +74,20 @@
 #include "hal_spi.h"
 #endif
 
+#define NO_TASK_ID 0xFF
+
 /**************************************************************************************************
  *                                      GLOBAL VARIABLES
  **************************************************************************************************/
 uint8 Hal_TaskID;
 
+uint8 registeredKeysTaskID=NO_TASK_ID;
+
 extern void HalLedUpdate( void ); /* Notes: This for internal only so it shouldn't be in hal_led.h */
+
+void setRegisteredKeysTaskID(uint8 taskId){
+	registeredKeysTaskID=taskId;
+}
 
 /**************************************************************************************************
  * @fn      Hal_Init
@@ -268,27 +277,46 @@ uint16 Hal_ProcessEvent( uint8 task_id, uint16 events )
  *
  * @return  None
  **************************************************************************************************/
-void Hal_ProcessPoll ()
-{
+void Hal_ProcessPoll (){
+	static uint8 previousP0=0;
 #if defined( POWER_SAVING )
-  /* Allow sleep before the next OSAL event loop */
-  ALLOW_SLEEP_MODE();
-#endif
-  
-  /* UART Poll */
-#if (defined HAL_UART) && (HAL_UART == TRUE)
-  HalUARTPoll();
-#endif
-  
-  /* SPI Poll */
-#if (defined HAL_SPI) && (HAL_SPI == TRUE)
-  HalSpiPoll();
+	/* Allow sleep before the next OSAL event loop */
+	ALLOW_SLEEP_MODE();
 #endif
 
-  /* HID poll */
-#if (defined HAL_HID) && (HAL_HID == TRUE)
-  usbHidProcessEvents();
+	/* UART Poll */
+#if (defined HAL_UART) && (HAL_UART == TRUE)
+	HalUARTPoll();
 #endif
+
+	/* SPI Poll */
+#if (defined HAL_SPI) && (HAL_SPI == TRUE)
+	HalSpiPoll();
+#endif
+
+	/* HID poll */
+#if (defined HAL_HID) && (HAL_HID == TRUE)
+	usbHidProcessEvents();
+#endif
+
+	if (P0_0 ){
+		if (previousP0==0){
+			previousP0++;
+			if ( registeredKeysTaskID != NO_TASK_ID ){
+				// Send the address to the task
+				keyChange_t * msgPtr = (keyChange_t *)osal_msg_allocate( sizeof(keyChange_t) );
+				if ( msgPtr ){
+					msgPtr->hdr.event = KEY_CHANGE;
+					msgPtr->state = HAL_KEY_STATE_NORMAL;
+					msgPtr->keys = HAL_KEY_SW_1;
+
+					osal_msg_send( registeredKeysTaskID, (uint8 *)msgPtr );
+				}
+			}
+		}
+	} else {
+		previousP0=0;
+	}
  
 }
 

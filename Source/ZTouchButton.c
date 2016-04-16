@@ -11,6 +11,7 @@
 
 #include "ZComDef.h"
 #include "OSAL.h"
+#include "hal_drivers.h"
 #include "AF.h"
 #include "ZDApp.h"
 #include "ZMAC.h"
@@ -19,6 +20,7 @@
 #include "zcl_general.h"
 #include "zcl_ha.h"
 #include "ZTouchButton.h"
+#include "AddrMgr.h"
 #include "onboard.h"
 /* HAL */
 #include "hal_lcd.h"
@@ -36,7 +38,13 @@
 #include "clusters/ClusterElectricityMeasure.h"
 #include "clusters/ClusterTest.h"
 
+
+_PRAGMA(vector=P0INT_VECTOR) __near_func __interrupt void port0Interrupt(void);
+
+
+
 static byte ZTouchButtonTaskID;
+static afAddrType_t onOffSendaddr;
 
 
 static void ZTouchButton_ProcessIncomingMsg( zclIncomingMsg_t *msg );
@@ -47,6 +55,53 @@ static uint8 ZTouchButton_ProcessInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 ZTouchButton_ProcessInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
+
+
+__sfr __no_init volatile struct  {
+	unsigned char DIR0_0: 1;
+	unsigned char DIR0_1: 1;
+	unsigned char DIR0_2: 1;
+	unsigned char DIR0_3: 1;
+	unsigned char DIR0_4: 1;
+	unsigned char DIR0_5: 1;
+	unsigned char DIR0_6: 1;
+	unsigned char DIR0_7: 1;
+} @ 0xFD;
+
+__sfr __no_init volatile struct  {
+	unsigned char P0SEL_0: 1;
+	unsigned char P0SEL_1: 1;
+	unsigned char P0SEL_2: 1;
+	unsigned char P0SEL_3: 1;
+	unsigned char P0SEL_4: 1;
+	unsigned char P0SEL_5: 1;
+	unsigned char P0SEL_6: 1;
+	unsigned char P0SEL_7: 1;
+} @ 0xF3;
+
+__sfr __no_init volatile struct  {
+	unsigned char P0IFG_0: 1;
+	unsigned char P0IFG_1: 1;
+	unsigned char P0IFG_2: 1;
+	unsigned char P0IFG_3: 1;
+	unsigned char P0IFG_4: 1;
+	unsigned char P0IFG_5: 1;
+	unsigned char P0IFG_6: 1;
+	unsigned char P0IFG_7: 1;
+} @ 0x89;
+
+__sfr __no_init volatile struct  {
+	unsigned char P0ICON: 1;
+	unsigned char P1ICON_L: 1;
+	unsigned char P1ICON_H: 1;
+	unsigned char P2ICON: 1;
+	unsigned char RESERVED_4: 1;
+	unsigned char RESERVED_5: 1;
+	unsigned char RESERVED_6: 1;
+	unsigned char PADSC: 1;
+} @ 0xF3;
+
+
 /*********************************************************************
  * ZCL General Profile Callback table
  */
@@ -76,6 +131,17 @@ void ZTouchButton_Init( byte task_id ){
   	EA=1;
  	identifyInit(ZTouchButtonTaskID);
 	ZMacSetTransmitPower(TX_PWR_PLUS_3);
+	
+	P0_0 = 0;
+	DIR0_0 =0;
+	P0SEL=0;
+	P0ICON=0;
+	P0IEN=0x01;
+	P0IE=1;
+	
+
+	setRegisteredKeysTaskID(task_id);
+	fastBlinkOn();
 }
 
 /*********************************************************************
@@ -89,8 +155,9 @@ void ZTouchButton_Init( byte task_id ){
  */
 uint16 ZTouchButtonEventLoop( uint8 task_id, uint16 events ){
 	afIncomingMSGPacket_t *MSGpkt;
+	devStates_t zclSampleSw_NwkState;
   
-	  (void)task_id;  // Intentionally unreferenced parameter
+	(void)task_id;  // Intentionally unreferenced parameter
 	 if ( events & SYS_EVENT_MSG ){
 		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( ZTouchButtonTaskID )) )  {
 			switch ( MSGpkt->hdr.event ) {
@@ -98,8 +165,31 @@ uint16 ZTouchButtonEventLoop( uint8 task_id, uint16 events ){
           			// Incoming ZCL Foundation command/response messages
           			ZTouchButton_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
           			break;
-		       default:
-        		  break;
+				case  KEY_CHANGE:
+					if (((keyChange_t *)MSGpkt)->keys==HAL_KEY_SW_1){
+						BindingEntry_t * bindEntry;
+						bindEntry = bindFind(ENDPOINT_ONOFF_SWITCH, ZCL_CLUSTER_ID_GEN_ON_OFF,0);
+						if( bindEntry){
+							 AddrMgrEntry_t entry;
+							 entry.user = ADDRMGR_USER_BINDING;
+							entry.index = bindEntry->dstIdx;
+							uint8 stat = AddrMgrEntryGet( &entry );
+							if (stat){
+								onOffSendaddr.addrMode = afAddr16Bit;
+								onOffSendaddr.addr.shortAddr = entry.nwkAddr;
+								onOffSendaddr.endPoint=bindEntry->dstEP;
+								zcl_SendCommand(ENDPOINT_ONOFF_SWITCH, &onOffSendaddr, ZCL_CLUSTER_ID_GEN_ON_OFF,COMMAND_TOGGLE, TRUE, ZCL_FRAME_CLIENT_SERVER_DIR, TRUE, 0, 0, 0,NULL);
+							}
+						}
+					}
+					break;
+				case ZDO_STATE_CHANGE:
+          			zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
+					if (zclSampleSw_NwkState == DEV_END_DEVICE){
+						fastBlinkOff();
+					}
+		       	default:
+        			break;
       		}
 
         osal_msg_deallocate( (uint8 *)MSGpkt );
@@ -301,6 +391,19 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 	}
 
   return ( stat );
+}
+
+
+HAL_ISR_FUNCTION( port0Interrupt, P0INT_VECTOR ){
+	HAL_ENTER_ISR();
+
+	if(P0IFG_0){
+		P0IFG_0=0;
+		P0IF=0;
+	}
+
+	CLEAR_SLEEP_MODE();
+	HAL_EXIT_ISR();
 }
 
 

@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=46106064
+Checksum=-673167425
 [CallStack]
 ShowArgs=0
 [Disassembly]
@@ -40,7 +40,7 @@ ShowTimeSum=1
 [Breakpoints2]
 Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\Source\test\mainTestcs5463.c}.52.1" 0 0 1 "" 0 ""
 Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\Source\test\mainTestcs5463.c}.53.1" 0 0 1 "" 0 ""
-Bp2=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\Source\ZTouchButton.c}.109.3" 0 0 1 "" 0 ""
+Bp2=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\Source\ZTouchButton.c}.109.3" 0 0 1 "" 0 ""
 Bp3=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\Source\zmain\ZMain.c}.78.3" 0 0 1 "" 0 ""
 Count=4
 [Interrupts]
@@ -71,10 +71,14 @@ Fmt9={W}0:temperatureValue	3	0
 Fmt10={W}0:ticks	4	0
 Fmt11={W}0:value5463	4	0
 [Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c}.84.2" 0 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c}.78.2" 1 0 0 0 "" 0 ""
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterIdentify.c}.91.2" 0 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\clusters\ClusterOnOff.c}.78.2" 0 0 0 0 "" 0 ""
 Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\Source\test\mainTestcs5463.c}.121.2" 0 0 0 0 "" 0 ""
-Count=3
+Bp3=_ "STD_CODE" "{$PROJ_DIR$\..\Source\ZTouchButton.c}.172.7" 0 0 0 0 "" 0 ""
+Bp4=_ "STD_CODE" "{$PROJ_DIR$\..\Components\stack\nwk\BindingTable.c}.270.3" 0 0 0 0 "" 0 ""
+Bp5=_ "STD_CODE" "{$PROJ_DIR$\..\Components\stack\zdo\ZDObject.c}.973.3" 0 0 0 0 "" 0 ""
+Bp6=_ "STD_CODE" "{$PROJ_DIR$\..\Components\stack\af\AF.c}.691.9" 0 0 0 0 "" 0 ""
+Count=7
 [ChipconEmu]
 Stop timers on halt=0
 Leave target running=1

@@ -442,41 +442,9 @@ uint8 MT_UblCommandProcessing(uint8 *pBuf)
 }
 #endif
 
-/*********************************************************************
- *                    EXTERNAL I/O FUNCTIONS
- *
- * User defined functions to control external devices. Add your code
- * to the following functions to control devices wired to DB outputs.
- *
- *********************************************************************/
 
-void BigLight_On( void )
-{
-  // Put code here to turn on an external light
-}
 
-void BigLight_Off( void )
-{
-  // Put code here to turn off an external light
-}
 
-void BuzzerControl( uint8 on )
-{
-  // Put code here to turn a buzzer on/off
-  (void)on;
-}
-
-void Dimmer( uint8 lvl )
-{
-  // Put code here to control a dimmer
-  (void)lvl;
-}
-
-// No dip switches on this board
-uint8 GetUserDipSw( void )
-{
-  return 0;
-}
 
 /*********************************************************************
 *********************************************************************/

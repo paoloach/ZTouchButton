@@ -293,7 +293,7 @@
           <state>SECURE=0</state>
           <state>TC_LINKKEY_JOIN</state>
           <state>NV_INIT</state>
-          <state>xNV_RESTORE</state>
+          <state>NV_RESTORE</state>
           <state>POWER_SAVING</state>
           <state>NWK_AUTO_POLL</state>
           <state>MULTICAST_ENABLED=FALSE</state>
@@ -1901,15 +1901,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\Components\services\saddr\saddr.h</name>
-    </file>
-  </group>
-  <group>
-    <name>test</name>
-    <file>
-      <name>$PROJ_DIR$\..\Source\test\mainTestcs5463.c</name>
-      <excluded>
-        <configuration>EndDeviceEB</configuration>
-      </excluded>
     </file>
   </group>
   <group>
