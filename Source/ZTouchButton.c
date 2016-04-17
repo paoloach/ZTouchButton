@@ -41,7 +41,7 @@
 
 _PRAGMA(vector=P0INT_VECTOR) __near_func __interrupt void port0Interrupt(void);
 
-
+#define HAL_KEY_DEBOUNCE_VALUE  25
 
 static byte ZTouchButtonTaskID;
 static afAddrType_t onOffSendaddr;
@@ -165,8 +165,23 @@ uint16 ZTouchButtonEventLoop( uint8 task_id, uint16 events ){
           			// Incoming ZCL Foundation command/response messages
           			ZTouchButton_ProcessIncomingMsg( (zclIncomingMsg_t *)MSGpkt );
           			break;
-				case  KEY_CHANGE:
-					if (((keyChange_t *)MSGpkt)->keys==HAL_KEY_SW_1){
+				case ZDO_STATE_CHANGE:
+          			zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
+					if (zclSampleSw_NwkState == DEV_END_DEVICE){
+						fastBlinkOff();
+					}
+		       	default:
+        			break;
+      		}
+
+        osal_msg_deallocate( (uint8 *)MSGpkt );
+    	}
+
+    	return (events ^ SYS_EVENT_MSG);
+	}
+	
+	if (events & HAL_KEY_EVENT){
+		if (P0_0 ){
 						BindingEntry_t * bindEntry;
 						bindEntry = bindFind(ENDPOINT_ONOFF_SWITCH, ZCL_CLUSTER_ID_GEN_ON_OFF,0);
 						if( bindEntry){
@@ -181,21 +196,8 @@ uint16 ZTouchButtonEventLoop( uint8 task_id, uint16 events ){
 								zcl_SendCommand(ENDPOINT_ONOFF_SWITCH, &onOffSendaddr, ZCL_CLUSTER_ID_GEN_ON_OFF,COMMAND_TOGGLE, TRUE, ZCL_FRAME_CLIENT_SERVER_DIR, TRUE, 0, 0, 0,NULL);
 							}
 						}
-					}
-					break;
-				case ZDO_STATE_CHANGE:
-          			zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-					if (zclSampleSw_NwkState == DEV_END_DEVICE){
-						fastBlinkOff();
-					}
-		       	default:
-        			break;
-      		}
-
-        osal_msg_deallocate( (uint8 *)MSGpkt );
-    	}
-
-    	return (events ^ SYS_EVENT_MSG);
+		}
+		return (events ^ HAL_KEY_EVENT);
 	}
 	
 	if ( events & IDENTIFY_TIMEOUT_EVT ) {
@@ -400,6 +402,7 @@ HAL_ISR_FUNCTION( port0Interrupt, P0INT_VECTOR ){
 	if(P0IFG_0){
 		P0IFG_0=0;
 		P0IF=0;
+		 osal_start_timerEx (ZTouchButtonTaskID, HAL_KEY_EVENT, HAL_KEY_DEBOUNCE_VALUE);
 	}
 
 	CLEAR_SLEEP_MODE();

@@ -303,24 +303,7 @@ CONST uint8 defaultTCLinkKey[SEC_KEY_LEN] = DEFAULT_TC_LINK_KEY;
 /*********************************************************************
  * STATUS STRINGS
  */
-#if defined ( LCD_SUPPORTED )
-  const char PingStr[]         = "Ping Rcvd from";
-  const char AssocCnfStr[]     = "Assoc Cnf";
-  const char SuccessStr[]      = "Success";
-  const char EndDeviceStr[]    = "EndDevice:";
-  const char ParentStr[]       = "Parent:";
-  const char ZigbeeCoordStr[]  = "ZigBee Coord";
-  const char NetworkIDStr[]    = "Network ID:";
-  const char RouterStr[]       = "Router:";
-  const char OrphanRspStr[]    = "Orphan Response";
-  const char SentStr[]         = "Sent";
-  const char FailedStr[]       = "Failed";
-  const char AssocRspFailStr[] = "Assoc Rsp fail";
-  const char AssocIndStr[]     = "Assoc Ind";
-  const char AssocCnfFailStr[] = "Assoc Cnf fail";
-  const char EnergyLevelStr[]  = "Energy Level";
-  const char ScanFailedStr[]   = "Scan Failed";
-#endif
+
 
 /*********************************************************************
  * @fn       nwk_globals_init()

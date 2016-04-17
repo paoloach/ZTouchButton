@@ -343,12 +343,8 @@ void halSleep( uint32 osal_timeout )
       HalKeyEnterSleep();
 #endif
 
-#ifdef HAL_SLEEP_DEBUG_LED
-      HAL_TURN_OFF_LED3();
-#else
       /* use this to turn LEDs off during sleep */
       HalLedEnterSleep();
-#endif
       
       if(timeout > maxSleepLoopTime)
       {
